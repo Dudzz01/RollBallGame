@@ -29,11 +29,14 @@ public class PlayerController : MonoBehaviour
     #region ModePlayerVariables
     private string modePlayerStyle;
     #endregion
-    
+    #region ActionPlayer
+
+    #endregion  
     private void Start()
     {
-        rotX = 1;
-        rotZ = 2;
+        
+        rotX = 7;
+        rotZ = 3;
         SpeedPlayer = 10;
         modePlayerStyle = "WalkPlayer";
         
@@ -47,8 +50,7 @@ public class PlayerController : MonoBehaviour
         
         #region ActionPlayerMethods
         
-        Walk();
-        Shoot();
+        Shoot(); 
         if(Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
@@ -59,6 +61,8 @@ public class PlayerController : MonoBehaviour
     }
 
     void FixedUpdate() {
+        Walk();
+        
         PlayerRotateFollowingMouse();
     }
     
