@@ -6,6 +6,7 @@ public class PlayerController : MonoBehaviour
 {
     #region ComponentsOfPlayerVariables
     [SerializeField] private Rigidbody rig;
+    [SerializeField] private GameObject ammo;
     #endregion
     #region MovimentVelocityPlayerVariables
     public float SpeedPlayer{get; set;}
@@ -14,6 +15,7 @@ public class PlayerController : MonoBehaviour
     public float DirX{get; set;}
     public float DirZ{get; set;}
 
+    private Vector3 dirPlayerToMouse;
     
     #endregion
     #region RotationPlayerVariables
@@ -22,18 +24,19 @@ public class PlayerController : MonoBehaviour
     #endregion
     #region RaycastPlayerVariables
 
-    RaycastHit hit;
+    private RaycastHit hit;
     #endregion
-
     #region ModePlayerVariables
     private string modePlayerStyle;
     #endregion
+    
     private void Start()
     {
         rotX = 1;
         rotZ = 2;
-        SpeedPlayer = 5;
+        SpeedPlayer = 10;
         modePlayerStyle = "WalkPlayer";
+        
     }
     void Update()
     {
@@ -45,6 +48,7 @@ public class PlayerController : MonoBehaviour
         #region ActionPlayerMethods
         
         Walk();
+        Shoot();
         if(Input.GetKeyDown(KeyCode.Space))
         {
             Jump();
@@ -65,7 +69,7 @@ public class PlayerController : MonoBehaviour
         
             if(modePlayerStyle == "WalkPlayer")
             {
-                if(!Input.anyKey || Input.GetKey("a") || Input.GetKey("d"))
+                if(!Input.anyKey || Input.GetKey("a") || Input.GetKey("d") || Input.GetMouseButton(0) || Input.GetMouseButton(1) || Input.GetMouseButton(2) || Input.GetMouseButton(3) || Input.GetMouseButton(4) || Input.GetMouseButton(5) || Input.GetMouseButton(6))
                 {
                     transform.rotation = Quaternion.Lerp(transform.rotation,Quaternion.Euler(0,transform.rotation.y,0), Time.deltaTime+0.05f);
                 } 
@@ -89,15 +93,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    public void PlayerRotateFollowingMouse()
+
+    public void PlayerRotateFollowingMouse() 
     {
         
         if(Physics.Raycast(Camera.main.ScreenPointToRay(Input.mousePosition), out hit ,100) && modePlayerStyle == "ShootPlayer")
         {
 
-            Vector3 playerToMouse = hit.point - transform.position;
-            playerToMouse.y = 0;
-            Quaternion newRotation = Quaternion.LookRotation(playerToMouse);
+            dirPlayerToMouse = hit.point - transform.position;
+            dirPlayerToMouse.y = 0;
+            Quaternion newRotation = Quaternion.LookRotation(dirPlayerToMouse);
             rig.MoveRotation(newRotation);
 
             
@@ -107,7 +112,14 @@ public class PlayerController : MonoBehaviour
 
     public void Shoot()
     {
-        Camera.main.ScreenPointToRay(Input.mousePosition);
+         if(Input.GetMouseButtonDown(0) && modePlayerStyle == "ShootPlayer")
+         {
+            GameObject bulletP =  Instantiate(ammo,transform.position,Quaternion.identity);
+            bulletP.GetComponent<AmmoController>().DirBullet = dirPlayerToMouse.normalized; // normalizacao do vetor para que a direcao seja sempre constante de comprimento 1
+         }
+
+         return;
+
     }
 
     public void Jump()
