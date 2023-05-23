@@ -1,8 +1,8 @@
-using System.Collections;
+  using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AmmoController : MonoBehaviour
+public class BulletPlayer : MonoBehaviour
 {
     [SerializeField] private Rigidbody rig;
     public Vector3 DirBullet {get; set;}

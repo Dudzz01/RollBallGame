@@ -7,6 +7,20 @@ public class PlayerController : MonoBehaviour
     #region ComponentsOfPlayerVariables
     [SerializeField] private Rigidbody rig;
     [SerializeField] private GameObject ammo;
+
+    private static PlayerController _Instance;
+
+    public static PlayerController Instance // Design Pattern Singleton
+    {
+        get
+        {
+            _Instance = FindObjectOfType<PlayerController>();
+
+            return _Instance;
+        }
+    }
+
+    public float lifePlayer{get; set;}
     #endregion
     #region MovimentVelocityPlayerVariables
     public float SpeedPlayer{get; set;}
@@ -34,8 +48,8 @@ public class PlayerController : MonoBehaviour
     #endregion  
     private void Start()
     {
-        
-        rotX = 7;
+        lifePlayer = 10;
+        rotX = 3;
         rotZ = 3;
         SpeedPlayer = 10;
         modePlayerStyle = "WalkPlayer";
@@ -51,18 +65,18 @@ public class PlayerController : MonoBehaviour
         #region ActionPlayerMethods
         
         Shoot(); 
-        if(Input.GetKeyDown(KeyCode.Space))
-        {
-            Jump();
-        }
+        Jump();
         SetModePlayer();
+
         #endregion
+
+        Debug.Log($"Life of player: {lifePlayer}");
         
     }
 
-    void FixedUpdate() {
+    void FixedUpdate()
+    {
         Walk();
-        
         PlayerRotateFollowingMouse();
     }
     
@@ -119,7 +133,7 @@ public class PlayerController : MonoBehaviour
          if(Input.GetMouseButtonDown(0) && modePlayerStyle == "ShootPlayer")
          {
             GameObject bulletP =  Instantiate(ammo,transform.position,Quaternion.identity);
-            bulletP.GetComponent<AmmoController>().DirBullet = dirPlayerToMouse.normalized; // normalizacao do vetor para que a direcao seja sempre constante de comprimento 1
+            bulletP.GetComponent<BulletPlayer>().DirBullet = dirPlayerToMouse.normalized; // normalizacao do vetor para que a direcao seja sempre constante de comprimento 1
          }
 
          return;
@@ -128,7 +142,10 @@ public class PlayerController : MonoBehaviour
 
     public void Jump()
     {
-        rig.AddForce(0,7,0,ForceMode.Impulse);
+        if(Input.GetKeyDown(KeyCode.Space))
+        {
+            rig.AddForce(0,7,0,ForceMode.Impulse);
+        }
     }
 
     
